@@ -15,19 +15,19 @@
 
         app:showAsAction="never" />
     <item
-        android:id="@+id/tipe"
+        android:id="@+id/dragon"
         android:orderInCategory="100"
-        android:title="@string/tipe"
+        android:title="@string/dragon"
 
         app:showAsAction="never" />
     <item
-        android:id="@+id/subtipe"
+        android:id="@+id/Special"
         android:orderInCategory="100"
-        android:title="@string/subtipe"
+        android:title="@string/special"
         app:showAsAction="never" />
     <item
-        android:id="@+id/supertipe"
+        android:id="@+id/Pokémon"
         android:orderInCategory="100"
-        android:title="@string/supertipe"
+        android:title="@string/pok_mon"
         app:showAsAction="never" />
 </menu>

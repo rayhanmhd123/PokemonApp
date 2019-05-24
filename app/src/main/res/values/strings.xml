@@ -15,4 +15,7 @@
     <string name="supertipe">SuperTipe</string>
     <string name="card">Card</string>
     <string name="delete_all">Delete All</string>
+    <string name="pok_mon">Pokémon</string>
+    <string name="special">Special</string>
+    <string name="dragon">Dragon</string>
 </resources>
