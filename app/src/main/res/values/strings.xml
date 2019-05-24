@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Pokemon App</string>
+    <string name="action_settings">Settings</string>
+    <string name="pokemon">pokemon</string>
+    <string name="name">name</string>
+    <string name="subtypes">subtypes</string>
+    <string name="supertypes">supertypes</string>
+    <string name="types">types</string>
+    <string name="type">type</string>
+    <string name="nama">nama</string>
+    <string name="subtype">subtype</string>
+    <string name="supertype">supertype</string>
+    <string name="tipe">Tipe</string>
+    <string name="subtipe">SubTipe</string>
+    <string name="supertipe">SuperTipe</string>
+    <string name="card">Card</string>
+    <string name="delete_all">Delete All</string>
+</resources>

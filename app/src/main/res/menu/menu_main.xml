@@ -1,0 +1,33 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.pokemonapp.MainActivity">
+    <item
+        android:id="@+id/delete"
+        android:orderInCategory="100"
+        android:title="@string/delete_all"
+
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/card"
+        android:orderInCategory="100"
+        android:title="@string/card"
+
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/tipe"
+        android:orderInCategory="100"
+        android:title="@string/tipe"
+
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/subtipe"
+        android:orderInCategory="100"
+        android:title="@string/subtipe"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/supertipe"
+        android:orderInCategory="100"
+        android:title="@string/supertipe"
+        app:showAsAction="never" />
+</menu>
