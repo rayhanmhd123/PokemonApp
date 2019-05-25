@@ -1,3 +1,2 @@
 # PokemonApp
-
-menu berfungsi untuk memilih ingin menampilkan dragon, special, dragon, pokemon, serta untuk menghapus semua data.
+floating button untuk mengatur type, subtype, supertype. serta menu untuk menghapus semua data.
