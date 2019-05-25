@@ -2,23 +2,19 @@ package com.example.pokemonapp;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Switch;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,11 +31,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SetDialog.SetDialogListener{
     int page = 1;
-    int type = 0;
 
     private PokemonViewModel mTempatViewModel;
+    private List<String> alltype;
+    private List<String> allsubtype;
+    private List<String> allsupertype;
+
+    private String type;
+    private String subtype;
+    private String supertype;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +51,36 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        alltype = new ArrayList<>();
+        allsubtype = new ArrayList<>();
+        allsupertype = new ArrayList<>();
+        alltype.add("Kosong");
+        allsubtype.add("Kosong");
+        allsupertype.add("Kosong");
+        type = "Kosong";
+        subtype = "Kosong";
+        supertype = "Kosong";
+
+
+
+        loadtype();
+        loadsubtype();
+        loadsupertype();
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if(alltype != null && allsubtype != null && allsupertype != null){
+                    SetDialog dialog = new SetDialog();
+                    dialog.setType(alltype);
+                    dialog.setSubtype(allsubtype);
+                    dialog.setSupertype(allsupertype);
+                    dialog.setTypes(type);
+                    dialog.setSubtypes(subtype);
+                    dialog.setSupertypes(supertype);
+                    dialog.show(getSupportFragmentManager(), "pokemon");
+                }
             }
         });
 
@@ -70,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 if(!recyclerView.canScrollVertically(1)){
 //                    page = adapter.getCount()%10;
                     page = page+1;
-                    loadPokemon(page,type);
+                    loadPokemon();
                 }
             }
         });
@@ -104,59 +131,51 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.delete) {
             mTempatViewModel.deleteAllTempat();
             page=1;
-//            loadPokemon(page,type);
+            loadPokemon();
             Toast.makeText(getApplicationContext(), "Berhasil hapus semua data", Toast.LENGTH_SHORT).show();
             return true;
         }
-        if (id == R.id.card) {
-            mTempatViewModel.deleteAllTempat();
-            page=1;
-            type = 0;
-            loadPokemon(page,type);
-            Toast.makeText(getApplicationContext(), "Menampilkan Berdasarkan Card", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        if (id == R.id.dragon) {
-            mTempatViewModel.deleteAllTempat();
-            page=1;
-            type = 1;
-            loadPokemon(page,type);
-            Toast.makeText(getApplicationContext(), "Menampilkan dragon", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        if (id == R.id.Special) {
-            mTempatViewModel.deleteAllTempat();
-            page=1;
-            type = 2;
-            loadPokemon(page,type);
-            Toast.makeText(getApplicationContext(), "Menampilkan Special", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        if (id == R.id.Pokémon) {
-            mTempatViewModel.deleteAllTempat();
-            page=1;
-            type = 3;
-            loadPokemon(page,type);
-            Toast.makeText(getApplicationContext(), "Menampilkan Pokémon", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadPokemon(int page,int type) {
-
+    private void loadPokemon() {
         String JSON_URL;
-        switch (type) {
-            case 1:  JSON_URL = "https://api.pokemontcg.io/v1/cards?types=dragon&page="+page+"&pageSize=10";
-                break;
-            case 2:  JSON_URL = "https://api.pokemontcg.io/v1/cards?subtype=Special&page="+page+"&pageSize=10";
-                break;
-            case 3:  JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype=Pokémon&page="+page+"&pageSize=10";
-                break;
-            default: JSON_URL = "https://api.pokemontcg.io/v1/cards?page="+page+"&pageSize=10";
-                break;
+        if(!type.equals("Kosong") && subtype.equals("Kosong") && supertype.equals("Kosong")){
+            JSON_URL = "https://api.pokemontcg.io/v1/cards?types="+type+"&page="+page+"&pageSize=10";
+//            mTempatViewModel.deleteAllTempat();
+        }else{
+            if(type.equals("Kosong") && !subtype.equals("Kosong") && supertype.equals("Kosong")){
+                JSON_URL = "https://api.pokemontcg.io/v1/cards?subtype="+subtype.replaceAll("\\s{2,}","")+"&page="+page+"&pageSize=10";
+//                mTempatViewModel.deleteAllTempat();
+            }else {
+                if(type.equals("Kosong") && subtype.equals("Kosong") && !supertype.equals("Kosong")){
+                    JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&page="+page+"&pageSize=10";
+//                    mTempatViewModel.deleteAllTempat();
+                }else {
+                    if(!type.equals("Kosong") && !subtype.equals("Kosong") && supertype.equals("Kosong")){
+                        JSON_URL = "https://api.pokemontcg.io/v1/cards?subtype="+subtype+"&types="+type+"&page="+page+"&pageSize=10";
+//                        mTempatViewModel.deleteAllTempat();
+                    }else {
+                        if(!type.equals("Kosong") && subtype.equals("Kosong") && !supertype.equals("Kosong")){
+                            JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&types="+type+"&page="+page+"&pageSize=10";
+//                            mTempatViewModel.deleteAllTempat();
+                        }else {
+                            if(type.equals("Kosong") && !subtype.equals("Kosong") && !supertype.equals("Kosong")){
+                                JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&subtype="+subtype+"&page="+page+"&pageSize=10";
+//                                mTempatViewModel.deleteAllTempat();
+                            }else{
+                                if(!type.equals("Kosong") && !subtype.equals("Kosong") && !supertype.equals("Kosong")){
+                                    JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&subtype="+subtype+"&types="+type+"&page="+page+"&pageSize=10";
+//                                    mTempatViewModel.deleteAllTempat();
+                                }else {
+                                    JSON_URL = "https://api.pokemontcg.io/v1/cards?page="+page+"&pageSize=10";
+//                                    mTempatViewModel.deleteAllTempat();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
         StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
                 new Response.Listener<String>() {
@@ -176,19 +195,21 @@ public class MainActivity extends AppCompatActivity {
                                 String id=playerObject.getString("id");
                                 String Nama=playerObject.getString("name");
                                 String imageUrl=playerObject.getString("imageUrl");
-
-                                String type = "bug";
-//                                JSONArray types = playerObject.getJSONArray("");
-//                                for (int k=0; k<types.length(); k++){
-//                                    types.length();
-//                                    type.concat(types.getString(k));
-//                                }
-
-
+//                                String type = playerObject.getJSONArray("types").getString(0);
+                                JSONArray types = playerObject.getJSONArray("types");
+                                String typek = "";
+                                for (int k = 0 ; k < types.length() ; k++){
+                                    String temp = types.getString(k);
+                                    if (k == 0){
+                                        typek = temp;
+                                    }else {
+                                        typek = typek + ", " + temp;
+                                    }
+                                }
                                 String supertype=playerObject.getString("supertype");
                                 String subtype=playerObject.getString("subtype");
 
-                                Pokemon pokemon = new Pokemon(id,Nama,imageUrl,type,supertype,subtype);
+                                Pokemon pokemon = new Pokemon(id,Nama,imageUrl,typek,supertype,subtype);
                                 mTempatViewModel.insert(pokemon);
                             }
 
@@ -209,4 +230,103 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
+    private void loadtype() {
+
+        String JSON_URL= "https://api.pokemontcg.io/v1/types";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            JSONArray types = obj.getJSONArray("types");
+                            for (int k=0; k<types.length(); k++){
+                                alltype.add(types.getString(k));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+    private void loadsubtype() {
+
+        String JSON_URL= "https://api.pokemontcg.io/v1/subtypes";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            JSONArray types = obj.getJSONArray("subtypes");
+                            for (int k=0; k<types.length(); k++){
+                                allsubtype.add(types.getString(k));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+    private void loadsupertype() {
+
+        String JSON_URL= "https://api.pokemontcg.io/v1/supertypes";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            JSONArray types = obj.getJSONArray("supertypes");
+                            for (int k=0; k<types.length(); k++){
+                                allsupertype.add(types.getString(k));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void onDialogPositiveClick(String type, String subtype, String supertype) {
+        this.type = type;
+        this.subtype = subtype;
+        this.supertype = supertype;
+        mTempatViewModel.deleteAllTempat();
+        loadPokemon();
+        Toast.makeText(getApplicationContext(), "Sukses" + type + subtype + supertype, Toast.LENGTH_SHORT).show();
+    }
 }

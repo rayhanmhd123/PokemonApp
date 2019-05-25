@@ -18,4 +18,8 @@
     <string name="pok_mon">Pokémon</string>
     <string name="special">Special</string>
     <string name="dragon">Dragon</string>
+    <string name="setting">Setting</string>
+    <string name="Type">Type</string>
+    <string name="SubType">SubType</string>
+    <string name="SuperType">SuperType</string>
 </resources>

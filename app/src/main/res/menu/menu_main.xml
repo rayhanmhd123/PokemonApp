@@ -8,26 +8,4 @@
         android:title="@string/delete_all"
 
         app:showAsAction="never" />
-    <item
-        android:id="@+id/card"
-        android:orderInCategory="100"
-        android:title="@string/card"
-
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/dragon"
-        android:orderInCategory="100"
-        android:title="@string/dragon"
-
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/Special"
-        android:orderInCategory="100"
-        android:title="@string/special"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/Pokémon"
-        android:orderInCategory="100"
-        android:title="@string/pok_mon"
-        app:showAsAction="never" />
 </menu>
