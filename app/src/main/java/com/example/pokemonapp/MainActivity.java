@@ -31,6 +31,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SetDialog.SetDialogListener{
     int page = 1;
+    int pagenow = 1;
     private PokemonViewModel mTempatViewModel;
     private List<String> alltype;
     private List<String> allsubtype;
@@ -83,9 +84,11 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(!recyclerView.canScrollVertically(1)){
-                    page = (adapter.getCount()/10) + 1;
+                    page = pagenow;
+                    page = page + 1;
                     if(adapter.getCount()%10 < 1){
-                        loadPokemon();
+                        loadPokemon(page);
+                        pagenow = pagenow + 1;
                     }
                 }
             }
@@ -117,14 +120,14 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
         if (id == R.id.delete) {
             mTempatViewModel.deleteAllTempat();
             page=1;
-//            loadPokemon();
+            pagenow = 1;
             Toast.makeText(getApplicationContext(), "Berhasil hapus semua data", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadPokemon() {
+    private void loadPokemon(int page) {
         String JSON_URL;
         if(!type.equals("Kosong") && subtype.equals("Kosong") && supertype.equals("Kosong")){
             JSON_URL = "https://api.pokemontcg.io/v1/cards?types="+type+"&page="+page+"&pageSize=10";
@@ -300,7 +303,9 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
         this.subtype = subtype;
         this.supertype = supertype;
         mTempatViewModel.deleteAllTempat();
-        loadPokemon();
+        page =1;
+        pagenow =1;
+        loadPokemon(page);
         Toast.makeText(getApplicationContext(), "Request " + type+" "+ subtype +" "+ supertype, Toast.LENGTH_SHORT).show();
     }
 }
