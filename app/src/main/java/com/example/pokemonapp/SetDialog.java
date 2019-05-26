@@ -5,33 +5,16 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -90,11 +73,9 @@ public class SetDialog extends DialogFragment {
         LayoutInflater inflater = Objects.requireNonNull(getActivity()).getLayoutInflater();
         @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.setting, null);
         builder.setView(view);
-
         spinner = view.findViewById(R.id.spinner);
         spinner2 = view.findViewById(R.id.spinner2);
         spinner3 = view.findViewById(R.id.spinner3);
-
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, type);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         ArrayAdapter<String> adapter2 = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, subtype);
@@ -104,20 +85,18 @@ public class SetDialog extends DialogFragment {
         spinner.setAdapter(adapter);
         spinner2.setAdapter(adapter2);
         spinner3.setAdapter(adapter3);
-
-        if (!types.equals("Kosong") && types !=null){
+        if (!"Kosong".equals(types)){
             int position = adapter.getPosition(types);
             spinner.setSelection(position);
         }
-        if (!subtypes.equals("Kosong") && types !=null){
-            int position = adapter.getPosition(subtypes);
+        if (!"Kosong".equals(subtypes)){
+            int position = adapter2.getPosition(subtypes);
             spinner2.setSelection(position);
         }
-        if (!supertypes.equals("Kosong") && types !=null){
-            int position = adapter.getPosition(supertypes);
+        if (!"Kosong".equals(supertypes)){
+            int position = adapter3.getPosition(supertypes);
             spinner3.setSelection(position);
         }
-
         builder.setPositiveButton("Save Setting", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

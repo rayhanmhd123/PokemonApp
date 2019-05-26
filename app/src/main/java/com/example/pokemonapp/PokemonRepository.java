@@ -24,13 +24,6 @@ class PokemonRepository {
     void insert(Pokemon tempat) {
         new insertAsyncTask(mTempatDao).execute(tempat);
     }
-    void update(Pokemon tempat) {
-        new updateAsyncTask(mTempatDao).execute(tempat);
-    }
-
-    void delete(Pokemon tempat) {
-        new deleteAsyncTask(mTempatDao).execute(tempat);
-    }
     void deleteAllTempat() {
         new deleteAllTempatAsyncTask(mTempatDao).execute();
     }
@@ -50,34 +43,6 @@ class PokemonRepository {
         }
     }
 
-    private static class updateAsyncTask extends AsyncTask<Pokemon, Void, Void> {
-
-        private PokemonDao mAsyncTaskDao;
-
-        private updateAsyncTask(PokemonDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final Pokemon... params) {
-            mAsyncTaskDao.update(params[0]);
-            return null;
-        }
-    }
-    private static class deleteAsyncTask extends AsyncTask<Pokemon, Void, Void> {
-
-        private PokemonDao mAsyncTaskDao;
-
-        private deleteAsyncTask(PokemonDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final Pokemon... params) {
-            mAsyncTaskDao.delete(params[0]);
-            return null;
-        }
-    }
     private static class deleteAllTempatAsyncTask extends AsyncTask<Pokemon, Void, Void> {
 
         private PokemonDao mAsyncTaskDao;

@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -33,16 +31,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements SetDialog.SetDialogListener{
     int page = 1;
-
     private PokemonViewModel mTempatViewModel;
     private List<String> alltype;
     private List<String> allsubtype;
     private List<String> allsupertype;
-
     private String type;
     private String subtype;
     private String supertype;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         alltype = new ArrayList<>();
         allsubtype = new ArrayList<>();
         allsupertype = new ArrayList<>();
@@ -60,13 +54,9 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
         type = "Kosong";
         subtype = "Kosong";
         supertype = "Kosong";
-
-
-
         loadtype();
         loadsubtype();
         loadsupertype();
-
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
                 }
             }
         });
-
-
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         final PokemonListAdapter adapter = new PokemonListAdapter(this);
@@ -95,13 +83,13 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(!recyclerView.canScrollVertically(1)){
-//                    page = adapter.getCount()%10;
-                    page = page+1;
-                    loadPokemon();
+                    page = (adapter.getCount()/10) + 1;
+                    if(adapter.getCount()%10 < 1){
+                        loadPokemon();
+                    }
                 }
             }
         });
-
         mTempatViewModel = ViewModelProviders.of(this).get(PokemonViewModel.class);
         mTempatViewModel.getAllTempat().observe(this, new Observer<List<Pokemon>>() {
             @Override
@@ -110,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
                 adapter.setTempat(tempat);
             }
         });
-
     }
 
     @Override
@@ -126,12 +113,11 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.delete) {
             mTempatViewModel.deleteAllTempat();
             page=1;
-            loadPokemon();
+//            loadPokemon();
             Toast.makeText(getApplicationContext(), "Berhasil hapus semua data", Toast.LENGTH_SHORT).show();
             return true;
         }
@@ -145,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
 //            mTempatViewModel.deleteAllTempat();
         }else{
             if(type.equals("Kosong") && !subtype.equals("Kosong") && supertype.equals("Kosong")){
-                JSON_URL = "https://api.pokemontcg.io/v1/cards?subtype="+subtype.replaceAll("\\s{2,}","")+"&page="+page+"&pageSize=10";
+//                JSON_URL = "https://api.pokemontcg.io/v1/cards?subtype="+subtype+"&page="+page+"&pageSize=10";
+                JSON_URL = "https://api.pokemontcg.io/v1/cards?page="+page+"&pageSize=10&subtype="+subtype.replaceAll(" ","%20");
 //                mTempatViewModel.deleteAllTempat();
             }else {
                 if(type.equals("Kosong") && subtype.equals("Kosong") && !supertype.equals("Kosong")){
@@ -153,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
 //                    mTempatViewModel.deleteAllTempat();
                 }else {
                     if(!type.equals("Kosong") && !subtype.equals("Kosong") && supertype.equals("Kosong")){
-                        JSON_URL = "https://api.pokemontcg.io/v1/cards?subtype="+subtype+"&types="+type+"&page="+page+"&pageSize=10";
+                        JSON_URL = "https://api.pokemontcg.io/v1/cards?subtype="+subtype.replaceAll(" ","%20")+"&types="+type+"&page="+page+"&pageSize=10";
 //                        mTempatViewModel.deleteAllTempat();
                     }else {
                         if(!type.equals("Kosong") && subtype.equals("Kosong") && !supertype.equals("Kosong")){
@@ -161,11 +148,11 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
 //                            mTempatViewModel.deleteAllTempat();
                         }else {
                             if(type.equals("Kosong") && !subtype.equals("Kosong") && !supertype.equals("Kosong")){
-                                JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&subtype="+subtype+"&page="+page+"&pageSize=10";
+                                JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&subtype="+subtype.replaceAll(" ","%20")+"&page="+page+"&pageSize=10";
 //                                mTempatViewModel.deleteAllTempat();
                             }else{
                                 if(!type.equals("Kosong") && !subtype.equals("Kosong") && !supertype.equals("Kosong")){
-                                    JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&subtype="+subtype+"&types="+type+"&page="+page+"&pageSize=10";
+                                    JSON_URL = "https://api.pokemontcg.io/v1/cards?supertype="+supertype+"&subtype="+subtype.replaceAll(" ","%20")+"&types="+type+"&page="+page+"&pageSize=10";
 //                                    mTempatViewModel.deleteAllTempat();
                                 }else {
                                     JSON_URL = "https://api.pokemontcg.io/v1/cards?page="+page+"&pageSize=10";
@@ -184,36 +171,32 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
                         try {
                             JSONObject obj = new JSONObject(response);
                             JSONArray playerArray = obj.getJSONArray("cards");
-
-
                             for (int i = 0; i < playerArray.length(); i++) {
-
-//                                int k = playerArray.length();
-
                                 JSONObject playerObject = playerArray.getJSONObject(i);
-
                                 String id=playerObject.getString("id");
                                 String Nama=playerObject.getString("name");
                                 String imageUrl=playerObject.getString("imageUrl");
-//                                String type = playerObject.getJSONArray("types").getString(0);
-                                JSONArray types = playerObject.getJSONArray("types");
-                                String typek = "";
-                                for (int k = 0 ; k < types.length() ; k++){
-                                    String temp = types.getString(k);
-                                    if (k == 0){
-                                        typek = temp;
-                                    }else {
-                                        typek = typek + ", " + temp;
+                                String typek;
+                                try {
+                                    JSONArray types = playerObject.getJSONArray("types");
+                                    StringBuilder typekBuilder = new StringBuilder();
+                                    for (int k = 0; k < types.length() ; k++){
+                                        String temp = types.getString(k);
+                                        if (k == 0){
+                                            typekBuilder = new StringBuilder(temp);
+                                        }else {
+                                            typekBuilder.append(", ").append(temp);
+                                        }
                                     }
+                                    typek = typekBuilder.toString();
+                                }catch (Exception e){
+                                    typek = "Dont have any type";
                                 }
                                 String supertype=playerObject.getString("supertype");
                                 String subtype=playerObject.getString("subtype");
-
                                 Pokemon pokemon = new Pokemon(id,Nama,imageUrl,typek,supertype,subtype);
                                 mTempatViewModel.insert(pokemon);
                             }
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -225,15 +208,12 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
                         Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
 
     private void loadtype() {
-
         String JSON_URL= "https://api.pokemontcg.io/v1/types";
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
                 new Response.Listener<String>() {
                     @Override
@@ -261,9 +241,7 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
     }
 
     private void loadsubtype() {
-
         String JSON_URL= "https://api.pokemontcg.io/v1/subtypes";
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
                 new Response.Listener<String>() {
                     @Override
@@ -285,15 +263,12 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
                         Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
 
     private void loadsupertype() {
-
         String JSON_URL= "https://api.pokemontcg.io/v1/supertypes";
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, JSON_URL,
                 new Response.Listener<String>() {
                     @Override
@@ -315,7 +290,6 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
                         Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }
@@ -327,6 +301,6 @@ public class MainActivity extends AppCompatActivity implements SetDialog.SetDial
         this.supertype = supertype;
         mTempatViewModel.deleteAllTempat();
         loadPokemon();
-        Toast.makeText(getApplicationContext(), "Sukses" + type + subtype + supertype, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Request " + type+" "+ subtype +" "+ supertype, Toast.LENGTH_SHORT).show();
     }
 }

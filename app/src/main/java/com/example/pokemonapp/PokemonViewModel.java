@@ -24,13 +24,6 @@ public class PokemonViewModel extends AndroidViewModel {
         mRepository.insert(tempat);
     }
 
-    void update(Pokemon tempat) {
-        mRepository.update(tempat);
-    }
-
-    void delete(Pokemon tempat) {
-        mRepository.delete(tempat);
-    }
     void deleteAllTempat() {
         mRepository.deleteAllTempat();
     }

@@ -1,9 +1,7 @@
 package com.example.pokemonapp;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +23,10 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
     private List<Pokemon> mTempat; // Cached copy of words
     private int count;
 
-
+    public int getCount() {
+        count = mTempat.size();
+        return count;
+    }
 
     void setManager(FragmentManager manager){
         this.manager= manager;
@@ -45,19 +46,15 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
             image = itemView.findViewById(R.id.image);
         }
     }
-
-
     PokemonListAdapter(Context context ){
         mInflater = LayoutInflater.from(context);
     }
-
     @NonNull
     @Override
     public TempatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
         return new TempatViewHolder(itemView);
     }
-
     @Override
     public void onBindViewHolder(@NonNull final TempatViewHolder holder, @SuppressLint("RecyclerView") final int position) {
         if (mTempat != null) {
@@ -65,7 +62,6 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
             holder.nama.setText(current.getName());
             holder.type.setText(current.getType());
             Glide.with(mInflater.getContext()).load(current.getImageUrl()).into(holder.image);
-
             holder.parentlayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -78,16 +74,10 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
             Toast.makeText(mInflater.getContext(), "Sukses Menambahkan Data", Toast.LENGTH_SHORT).show();
         }
     }
-
     void setTempat(List<Pokemon> tempats){
         mTempat = tempats;
         notifyDataSetChanged();
     }
-
-    Pokemon getTempatat(int position){
-        return mTempat.get(position);
-    }
-
     // getItemCount() is called many times, and when it is first called,
     // mWords has not been updated (means initially, it's null, and we can't return null).
     @Override
@@ -95,9 +85,5 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
         if (mTempat != null)
             return mTempat.size();
         else return 0;
-    }
-
-    public int getCount() {
-        return mTempat.size();
     }
 }
